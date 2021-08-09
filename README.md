@@ -1,2 +1,0 @@
-# XFDing Dynamic CT Codes
- 
