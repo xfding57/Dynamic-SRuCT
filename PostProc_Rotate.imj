@@ -1,0 +1,41 @@
+while (nImages()>0) {
+     selectImage(nImages());  
+     run("Close");
+}
+
+workfolder = "/mnt/BMIT_data/bmitremoteuser/32G11176-Lifeng-Zhang/XFDing_SZeinali_tests/";
+
+data_dir = newArray( 2,     4,    5,      6,     7,     8,     9,    10,    11,    12);
+num_CT = newArray( 500,   750,  1000,   500,   500,   500,   750,  1000,   500,   500);
+limit = newArray(19501, 19251, 19001, 19501, 19501, 19501, 19251, 19001, 19501, 19501);
+upby = 250;
+
+for (i=0; i<=0; i+=1) {
+     for (j=500; j<=500; j+=100) {
+
+          sample = "sc"+data_dir[i];
+          folder = sample+"_sli"+j;
+
+          for (k=9001; k<=10001; k+=100) {
+
+               while (nImages()>0) {
+                    selectImage(nImages());  
+                    run("Close");
+               }
+
+               image = sample+"_"+leftPad(k,5);
+
+               open(workfolder+folder+"/"+image);
+               rotationangle = (k-1)*(180/num_CT[i])*(-1);
+               run("Rotate... ", "angle="+rotationangle+" grid=1 interpolation=Bilinear");
+               saveAs("Tiff", workfolder+folder+"_rotation/"+image);
+          }
+     }
+}
+
+function leftPad(n, width) {
+     s =""+n;
+     while (lengthOf(s)<width)
+          s = "0"+s;
+     return s;
+}

@@ -1,0 +1,59 @@
+while (nImages()>0) {
+	selectImage(nImages());
+	run("Close");
+}
+
+presentdir = "C:/_USASK/3_Recon3_sc2-sc12/210502 Volume Steps_ROI/ROI2/";
+savetodir = "C:/_USASK/3_Recon3_sc2-sc12/210502 Volume Steps_ROI/ROI2_areas/";
+
+trial = newArray(    2,    4,    5,    6,    7,    8,    9,   10,   12);
+
+time1 = newArray( 7001, 5001, 6001, 7001, 5001, 5001, 5001, 5001, 5001);
+time2 = newArray(12001,10001,11001,12001,10001,10001,10001,10001,10001);
+time3 = newArray(17001,15001,16001,17001,15001,15001,15001,15001,15001);
+time4 = newArray(19501,19251,19001,19501,19501,19501,19251,19001,19501);
+
+thresholds = newArray(119,129,139);
+
+for (i=0; i<=8; i+=1) {
+	for (j=0; j<=3; j+=1) {
+		if (j == 0) {times = time1;}
+		if (j == 1) {times = time2;}
+		if (j == 2) {times = time3;}
+		if (j == 3) {times = time4;}
+		for (k=0; k<=2; k+=1) {
+			outdir = "sc"+trial[i]+"_"+leftPad(times[i],5)+"_0_"+thresholds[k];
+			print("Running "+outdir);
+			open(presentdir+outdir, "virtual");
+			setThreshold(1, 255);
+			for (n=1; n<=201; n++) {
+				setSlice(n);
+				run("Measure");
+			}
+			saveAs("Results", savetodir+outdir+".txt");
+			if (isOpen("Results")) {
+				selectWindow("Results"); 
+				run("Close" );
+			}
+			while (nImages()>0) {
+				selectImage(nImages());
+				run("Close");
+			}
+		}
+	}
+}
+
+while (nImages()>0) {
+	selectImage(nImages());
+	run("Close");
+}
+
+print("Finished");
+print("");
+
+function leftPad(n, width) {
+	s =""+n;
+	while (lengthOf(s)<width)
+		s = "0"+s;
+	return s;
+}

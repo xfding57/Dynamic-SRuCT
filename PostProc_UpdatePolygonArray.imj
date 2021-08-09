@@ -1,0 +1,20 @@
+// Get x and y coordinates for the current polygon
+getSelectionCoordinates(xpoints, ypoints);
+Array.print(xpoints);
+Array.print(ypoints);
+
+// Get the total number of x and y coordinates
+xsize = xpoints.length;
+ysize = ypoints.length;
+print(xsize);
+print(ysize);
+
+// Preallocate space for a combined polygon array
+newpolygon = newArray(xsize+ysize);
+Array.print(newpolygon);
+for (i=1; i<=xsize; i+=1) {
+	print(newpolygon[i-1]);
+	newpolygon[2*(i-1)] = xpoints[i-1];
+	newpolygon[(i-1)+((i-1)+1)] = ypoints[i-1];
+}
+Array.print(newpolygon);
