@@ -1,8 +1,10 @@
+// close any images at the start of this macro
 while (nImages()>0) {
 	selectImage(nImages());
 	run("Close");
 }
 
+// Inputs
 presentdir = "C:/_USASK/3_Recon3_sc2-sc12/210502 Volume Steps_ROI/ROI2/";
 savetodir = "C:/_USASK/3_Recon3_sc2-sc12/210502 Volume Steps_ROI/ROI2_areas/";
 
@@ -15,12 +17,15 @@ time4 = newArray(19501,19251,19001,19501,19501,19501,19251,19001,19501);
 
 thresholds = newArray(119,129,139);
 
+// Loop
 for (i=0; i<=8; i+=1) {
+
 	for (j=0; j<=3; j+=1) {
 		if (j == 0) {times = time1;}
 		if (j == 1) {times = time2;}
 		if (j == 2) {times = time3;}
 		if (j == 3) {times = time4;}
+
 		for (k=0; k<=2; k+=1) {
 			outdir = "sc"+trial[i]+"_"+leftPad(times[i],5)+"_0_"+thresholds[k];
 			print("Running "+outdir);
@@ -30,11 +35,14 @@ for (i=0; i<=8; i+=1) {
 				setSlice(n);
 				run("Measure");
 			}
+
 			saveAs("Results", savetodir+outdir+".txt");
 			if (isOpen("Results")) {
 				selectWindow("Results"); 
 				run("Close" );
 			}
+
+			// close any images at the end of every loop
 			while (nImages()>0) {
 				selectImage(nImages());
 				run("Close");
@@ -43,14 +51,15 @@ for (i=0; i<=8; i+=1) {
 	}
 }
 
+// close any images at the end of this macro
 while (nImages()>0) {
 	selectImage(nImages());
 	run("Close");
 }
-
 print("Finished");
 print("");
 
+// function for padding zeros in string
 function leftPad(n, width) {
 	s =""+n;
 	while (lengthOf(s)<width)

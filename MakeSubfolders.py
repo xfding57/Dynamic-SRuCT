@@ -6,16 +6,32 @@ starttime = datetime.now() # get current time
 present_dir = os.getcwd() # get present directory
 run = 1
 
+### This script relies on directing to the folder before flats, darks, and tomo
+#============================ Inputs ===================================================================
 data_dir = [2] # which datasets to reconstruct
 
 for sets in range(np.size(data_dir)):
-	num_CT = 500 # number of projections in one CT 
+	# imaging parameters
+	# determine number of projections for tomo
+	if data_dir[i] == 4:
+		num_CT = 750
+	elif data_dir[i] == 5:
+		num_CT = 1000
+	elif data_dir[i] == 9:
+		num_CT = 750
+	elif data_dir[i] == 10:
+		num_CT = 1000
+	else:
+		num_CT = 500
 	first = 9000 # starting projection
 	last = 10000 # ending projection 
 	step = 100 # going up by steps of  
 
-	# Data directories
-	data_dir_name = 'sc'+str(data_dir[sets]) # format of folder containing original darks, flats, and tomo
+	# data directory format
+	# format of folder containing original darks, flats, and tomo
+	data_dir_name = 'sc'+str(data_dir[sets])
+
+#=======================================================================================================
 	darks_dir = 'darks' # name of darks folder
 	flats_dir = 'flats' # name of flats folder
 	tomo_dir = 'tomo' # name of tomo folder
@@ -32,7 +48,7 @@ for sets in range(np.size(data_dir)):
 
 	# Directory for reconstructed images
 	data_subdir_name = data_dir_name+'_subs' # format of folder containing the separated datasets 
-	os.mkdir(os.path.join(present_dir,data_subdir_name))
+	os.mkdir(os.path.join(present_dir,data_subdir_name)) # this may cause problems if the subfolder is already made
 
 	for i in range(first, last+step, step):
 		limit = (tomo_count-num_CT)+1
