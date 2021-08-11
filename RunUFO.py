@@ -5,7 +5,6 @@ starttime = datetime.now() # get current time
 present_dir = os.getcwd() # get present directory
 run = 1
 
-### This script relies on directing to the folder before flats, darks, and tomo
 #============================ Inputs ===================================================================
 # pre processing inputs
 data_dir = [2] # which datasets to reconstruct
@@ -40,6 +39,7 @@ for h in range(np.size(sli_num)):
 
 #============================ Dataset specific information ============================================
 	for i in range(np.size(data_dir)):
+		### This script relies on directing to the folder before flats, darks, and tomo
 		# this is the name containing data, make sure it is correct
 		current_data_dir = 'sc'+str(data_dir[i])+'_subs' # this is the name containing data, make sure it is correct
 		print('>>> Reading directory: '+current_data_dir)
@@ -83,10 +83,10 @@ for h in range(np.size(sli_num)):
 
 			# get output directories for whole volume 
 			if specificslicerun == 0:
-				dir_output = os.path.join(present_dir,current_data_dir+'_rec',data_subdir_names[j],'sli')
+				dir_output = os.path.join(present_dir,current_data_dir+'_rec',data_subdir_names[j],'sli','sli')
 			# get output directories for single slice 
 			if specificslicerun == 1:
-				dir_output = os.path.join(present_dir,current_data_dir+'_rec',data_subdir_names[j],'sli_'+str(sli_num[h]))
+				dir_output = os.path.join(present_dir,current_data_dir+'_rec',data_subdir_names[j],'sli_'+str(sli_num[h]),'sli')
 			print('>>> the output directory is:')
 			print(dir_output)
 			# get temp directory

@@ -16,6 +16,7 @@ time3 = newArray(17001,15001,16001,17001,15001,15001,15001,15001,15001);
 time4 = newArray(19501,19251,19001,19501,19501,19501,19251,19001,19501);
 
 thresholds = newArray(119,129,139);
+stacksize = 201;
 
 // Loop
 for (i=0; i<=8; i+=1) {
@@ -31,7 +32,7 @@ for (i=0; i<=8; i+=1) {
 			print("Running "+outdir);
 			open(presentdir+outdir, "virtual");
 			setThreshold(1, 255);
-			for (n=1; n<=201; n++) {
+			for (n=1; n<=stacksize; n++) {
 				setSlice(n);
 				run("Measure");
 			}

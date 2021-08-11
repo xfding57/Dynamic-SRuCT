@@ -6,7 +6,7 @@ starttime = datetime.now() # get current time
 present_dir = os.getcwd() # get present directory
 run = 1
 
-data_dir = [2] # which datasets to reconstruct
+data_dir = [2] # reconstructed datasets
 
 # indicate get directories
 for i in range(np.size(data_dir)):
