@@ -1,4 +1,4 @@
-# XFDing-Dynamic-CT-Codes
+# Dynamic-CT Scripts for Synchrotron Radiation
 ## Preamble
 This repository is to organize the scripts used for performing dynamic CT data using synchrotron radiation (SR). Currently, they are organized for managing the data collected on January 8th, 2020 which were published in https://doi.org/10.1107/S1600577523000826. The scripts can be roughly grouped into three sectionsm pre-processing, reconstruction, and post-processing.
 
