@@ -46,6 +46,57 @@ don't need to touch the command line for day-to-day use:
 The CLI usage below is what the GUI runs under the hood — reach for it directly for scripting,
 automation, or running on a cluster/headless machine without a display.
 
+## Using the GUI
+
+The GUI wraps the `tofu`/UFO reconstruction pipeline behind a simple interface, so you can run
+reconstructions without writing code, preview parameters interactively, and hand off to a batch
+script once you've settled on a setup. The slides below (from `media/gui-guide/`) walk through
+how it fits together.
+
+**1. Where the GUI sits in the stack**
+
+Each layer below adds usability and automation, while the layer underneath provides the
+underlying capability and flexibility: UFO (GPU-accelerated image processing, lowest level) →
+`tofu` (Python wrapper exposing reconstruction as scriptable pipelines) → this package
+(GUI + automated workflows, highest level).
+
+![Software stack: UFO, tofu, and Dynamic CT Reconstruction](media/gui-guide/01-software-stack.jpg)
+
+**2. GUI and data sorting**
+
+The GUI wraps the `tofu`/UFO pipelines behind an approachable interface with reconstruction
+preview and interactive parameter tuning, so non-expert users can run reconstructions without
+writing code. Behind the scenes, the data sorter splits an incoming projection stream into
+reconstructable chunks — rolling, overlapping windows for continuous dynamic scans, or discrete
+groups for time-lapse scans (one group per repeated rotation).
+
+![GUI overview and data sorting: dynamic vs. time-lapse chunking](media/gui-guide/02-gui-and-data-sorting.jpg)
+
+![GUI overview and data sorting, continued](media/gui-guide/03-gui-and-data-sorting.jpg)
+
+**3. Filters, region of interest, and output settings**
+
+Filtering options remove detector hot pixels and scintillator artifacts before reconstruction,
+apply TIE-based phase retrieval to improve contrast for low-density materials from a single
+distance, and suppress ring artifacts from detector pixel inhomogeneities. Region-of-interest
+settings let you crop and rotate the reconstruction volume to the relevant region (reducing
+processing time and output size), correct for detector/sample tilt, and choose an output bit
+depth (8-bit, 16-bit, or 32-bit float) to balance precision against file size — useful for
+keeping storage and memory demands manageable on large dynamic/time-resolved datasets.
+
+![Filters and batch scripting overview](media/gui-guide/04-filters-and-batch-scripting.jpg)
+
+![Filters and region-of-interest settings](media/gui-guide/05-filters-and-roi.jpg)
+
+**4. Batch scripting for advanced users**
+
+The same pipeline the GUI drives can also be run from the command line. Once you've tuned
+parameters in the GUI, you can copy that setup directly into a batch script for scripted,
+reproducible processing of large datasets — useful once you're comfortable with the underlying
+command-line tools and want to work with the lower-level functions directly.
+
+![Batch scripting for advanced users](media/gui-guide/06-batch-scripting.jpg)
+
 ## What's here
 
 | Script | Purpose |
