@@ -7,21 +7,8 @@ toolkit. Originally developed for the dataset described in
 
 This is the second major version of the codebase — reconstruction is now driven by two
 dedicated modes (fixed-interval "dynamic" scans and auto-detected "time-lapse" scans),
-center-of-rotation finding is automated, and a PyQt5 GUI is available for building and
-running commands without the command line.
-
-## What's here
-
-| Script | Purpose |
-|---|---|
-| `tofu-dCT.py` | Main reconstruction wrapper. Splits a raw projection stream into fixed-interval time points and reconstructs each with `tofu`/`ufo-launch` (flat-field correction, optional bright-spot removal, optional phase retrieval, optional ring removal, cropping/ROI, histogram clipping). |
-| `tofu-tlCT.py` | For scans where 180°-scan boundaries drift or aren't evenly spaced in time. Auto-detects each scan's start/stop by correlating projections, then calls `tofu-dCT.py` once per detected scan. |
-| `find-center.py` | Finds the center of rotation by correlating the 0° and 180° projections (sub-pixel, via parabolic fit around the minimum). For standard single-page TIFF stacks. |
-| `find-center-bigtif.py` | Same as above, for data stored as BigTIFF / multi-page TIFF files. |
-| `reslice.py` | Generates XY, XZ, and YZ resliced views across a folder of reconstructed time-point volumes, with resume support (skips already-processed time points) and optional 180° flip correction for time-lapse scans. |
-| `gui-dynamic.py` | PyQt5 desktop app for building `tofu-dCT.py` / `tofu-tlCT.py` / `reslice.py` commands interactively, plus a batch script editor for queuing and running multiple commands in sequence. |
-| `utils.py` | Shared helper functions used across the above (subfolder splitting with/without binning, grey-value histogram bounds, ellipse mask generation, scan-boundary search, progress bar). |
-| `imagej-save-polygon-array.txt` | ImageJ macro snippet for exporting polygon ROI coordinates (e.g. for tracking a region across slices/time points) to a flat array. |
+center-of-rotation finding is automated, and a PyQt5 GUI (`gui-dynamic.py`) is the
+recommended way to build and run commands.
 
 ## Requirements
 
@@ -34,7 +21,45 @@ You'll also need the [ufo-kit `tofu`/`ufo-launch` toolkit](https://github.com/uf
 and on your `PATH` — this does the actual CT reconstruction, flat-field correction, phase
 retrieval, and ring removal, and is not a Python package.
 
-## Workflow
+All scripts call each other by filename via `os.system`/`subprocess`, so keep them together
+in one working directory (or on `PATH`) — this includes the GUI, which shells out to the
+reconstruction and reslicing scripts.
+
+## Quick start: GUI
+
+```bash
+python gui-dynamic.py
+```
+
+This opens a form for building and launching reconstruction and reslicing commands, so you
+don't need to touch the command line for day-to-day use:
+
+- **Reconstruction tab** — pick dynamic or time-lapse mode, set paths, projection count,
+  center of rotation (or auto-find it), and toggle phase retrieval / ring removal / bright-spot
+  removal / cropping / z-ROI / histogram clipping. The generated command is shown before you
+  run it.
+- **Reslicing tab** — point at a folder of reconstructed time points and generate XY/XZ/YZ
+  views.
+- **Batch script editor** — queue up multiple commands (e.g. several samples, or reconstruction
+  followed by reslicing) and run them in sequence.
+
+The CLI usage below is what the GUI runs under the hood — reach for it directly for scripting,
+automation, or running on a cluster/headless machine without a display.
+
+## What's here
+
+| Script | Purpose |
+|---|---|
+| `gui-dynamic.py` | PyQt5 desktop app for building `tofu-dCT.py` / `tofu-tlCT.py` / `reslice.py` commands interactively, plus a batch script editor for queuing and running multiple commands in sequence. **Recommended entry point.** |
+| `tofu-dCT.py` | Main reconstruction wrapper. Splits a raw projection stream into fixed-interval time points and reconstructs each with `tofu`/`ufo-launch` (flat-field correction, optional bright-spot removal, optional phase retrieval, optional ring removal, cropping/ROI, histogram clipping). |
+| `tofu-tlCT.py` | For scans where 180°-scan boundaries drift or aren't evenly spaced in time. Auto-detects each scan's start/stop by correlating projections, then calls `tofu-dCT.py` once per detected scan. |
+| `find-center.py` | Finds the center of rotation by correlating the 0° and 180° projections (sub-pixel, via parabolic fit around the minimum). For standard single-page TIFF stacks. |
+| `find-center-bigtif.py` | Same as above, for data stored as BigTIFF / multi-page TIFF files. |
+| `reslice.py` | Generates XY, XZ, and YZ resliced views across a folder of reconstructed time-point volumes, with resume support (skips already-processed time points) and optional 180° flip correction for time-lapse scans. |
+| `utils.py` | Shared helper functions used across the above (subfolder splitting with/without binning, grey-value histogram bounds, ellipse mask generation, scan-boundary search, progress bar). |
+| `imagej-save-polygon-array.txt` | ImageJ macro snippet for exporting polygon ROI coordinates (e.g. for tracking a region across slices/time points) to a flat array. |
+
+## CLI usage
 
 1. **Reconstruct.**
    - If your scan has a fixed, known number of projections per 180° rotation and evenly spaced
@@ -45,8 +70,6 @@ retrieval, and ring removal, and is not a Python package.
      `-findCoR`, or you can run those separately first and pass `-CoR` explicitly.
 2. **Reslice.** Run `reslice.py` on the output folder to generate XY/XZ/YZ views across all
    time points.
-3. **GUI (optional).** Run `ct_reconstruction_gui.py` to build and launch any of the above
-   commands through a form instead of the CLI, and to queue several runs as a batch script.
 
 ### Example: dynamic CT (fixed time points)
 
@@ -94,7 +117,7 @@ Run any script with `-h` for the full list of arguments and defaults.
 
 ## Notes
 
-- `find-center.py`, `find-center-bigtif.py`, `reslice.py`, and `ct_reconstruction_gui.py`
+- `find-center.py`, `find-center-bigtif.py`, `reslice.py`, and `gui-dynamic.py`
   invoke each other and `tofu-dCT.py` / `tofu-tlCT.py` by filename via
   `os.system`/`subprocess`, so all scripts should stay in the same working directory (or on
   `PATH`) when running.
@@ -112,10 +135,12 @@ If you use this code, please cite:
 
 Ding, X. et al. (2023). *J. Synchrotron Rad.* DOI: [10.1107/S1600577523000826](https://doi.org/10.1107/S1600577523000826)
 
-
 Works that have used these scripts include:
 
 Danalou, S. et al. (2022). *Int. J. Pharm.* DOI: [10.1016/j.ijpharm.2022.122192](https://doi.org/10.1016/j.ijpharm.2022.122192)
+
 Danalou, S. et al. (2023). *AIChE J.* DOI: [10.1002/aic.18048](https://doi.org/10.1002/aic.18048)
+
 Blocka, C. et al. (2024). *Int. J. Pharm.* DOI: [10.1016/j.ijpharm.2024.124664](https://doi.org/10.1016/j.ijpharm.2024.124664)
+
 Kalugin, D. et al. (2026). *J. Pharm. Sci.* DOI: [10.1016/j.xphs.2026.104226](https://doi.org/10.1016/j.xphs.2026.104226)
