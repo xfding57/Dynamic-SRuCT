@@ -46,6 +46,19 @@ don't need to touch the command line for day-to-day use:
 The CLI usage below is what the GUI runs under the hood — reach for it directly for scripting,
 automation, or running on a cluster/headless machine without a display.
 
+## What's here
+
+| Script | Purpose |
+|---|---|
+| `gui-dynamic.py` | PyQt5 desktop app for building `tofu-dCT.py` / `tofu-tlCT.py` / `reslice.py` commands interactively, plus a batch script editor for queuing and running multiple commands in sequence. **Recommended entry point.** |
+| `tofu-dCT.py` | Main reconstruction wrapper. Splits a raw projection stream into fixed-interval time points and reconstructs each with `tofu`/`ufo-launch` (flat-field correction, optional bright-spot removal, optional phase retrieval, optional ring removal, cropping/ROI, histogram clipping). |
+| `tofu-tlCT.py` | For scans where 180°-scan boundaries drift or aren't evenly spaced in time. Auto-detects each scan's start/stop by correlating projections, then calls `tofu-dCT.py` once per detected scan. |
+| `find-center.py` | Finds the center of rotation by correlating the 0° and 180° projections (sub-pixel, via parabolic fit around the minimum). For standard single-page TIFF stacks. |
+| `find-center-bigtif.py` | Same as above, for data stored as BigTIFF / multi-page TIFF files. |
+| `reslice.py` | Generates XY, XZ, and YZ resliced views across a folder of reconstructed time-point volumes, with resume support (skips already-processed time points) and optional 180° flip correction for time-lapse scans. |
+| `utils.py` | Shared helper functions used across the above (subfolder splitting with/without binning, grey-value histogram bounds, ellipse mask generation, scan-boundary search, progress bar). |
+| `imagej-save-polygon-array.txt` | ImageJ macro snippet for exporting polygon ROI coordinates (e.g. for tracking a region across slices/time points) to a flat array. |
+
 ## Using the GUI
 
 The GUI wraps the `tofu`/UFO reconstruction pipeline behind a simple interface, so you can run
@@ -97,20 +110,7 @@ command-line tools and want to work with the lower-level functions directly.
 
 ![Batch scripting for advanced users](media/gui-guide/06-batch-scripting.jpg)
 
-## What's here
-
-| Script | Purpose |
-|---|---|
-| `gui-dynamic.py` | PyQt5 desktop app for building `tofu-dCT.py` / `tofu-tlCT.py` / `reslice.py` commands interactively, plus a batch script editor for queuing and running multiple commands in sequence. **Recommended entry point.** |
-| `tofu-dCT.py` | Main reconstruction wrapper. Splits a raw projection stream into fixed-interval time points and reconstructs each with `tofu`/`ufo-launch` (flat-field correction, optional bright-spot removal, optional phase retrieval, optional ring removal, cropping/ROI, histogram clipping). |
-| `tofu-tlCT.py` | For scans where 180°-scan boundaries drift or aren't evenly spaced in time. Auto-detects each scan's start/stop by correlating projections, then calls `tofu-dCT.py` once per detected scan. |
-| `find-center.py` | Finds the center of rotation by correlating the 0° and 180° projections (sub-pixel, via parabolic fit around the minimum). For standard single-page TIFF stacks. |
-| `find-center-bigtif.py` | Same as above, for data stored as BigTIFF / multi-page TIFF files. |
-| `reslice.py` | Generates XY, XZ, and YZ resliced views across a folder of reconstructed time-point volumes, with resume support (skips already-processed time points) and optional 180° flip correction for time-lapse scans. |
-| `utils.py` | Shared helper functions used across the above (subfolder splitting with/without binning, grey-value histogram bounds, ellipse mask generation, scan-boundary search, progress bar). |
-| `imagej-save-polygon-array.txt` | ImageJ macro snippet for exporting polygon ROI coordinates (e.g. for tracking a region across slices/time points) to a flat array. |
-
-## CLI usage
+## Using the Command Line scripts
 
 1. **Reconstruct.**
    - If your scan has a fixed, known number of projections per 180° rotation and evenly spaced
@@ -186,12 +186,10 @@ If you use this code, please cite:
 
 Ding, X. et al. (2023). *J. Synchrotron Rad.* DOI: [10.1107/S1600577523000826](https://doi.org/10.1107/S1600577523000826)
 
+
 Works that have used these scripts include:
 
-Danalou, S. et al. (2022). *Int. J. Pharm.* DOI: [10.1016/j.ijpharm.2022.122192](https://doi.org/10.1016/j.ijpharm.2022.122192)
-
-Danalou, S. et al. (2023). *AIChE J.* DOI: [10.1002/aic.18048](https://doi.org/10.1002/aic.18048)
-
-Blocka, C. et al. (2024). *Int. J. Pharm.* DOI: [10.1016/j.ijpharm.2024.124664](https://doi.org/10.1016/j.ijpharm.2024.124664)
-
-Kalugin, D. et al. (2026). *J. Pharm. Sci.* DOI: [10.1016/j.xphs.2026.104226](https://doi.org/10.1016/j.xphs.2026.104226)
+- Danalou, S. et al. (2022). *Int. J. Pharm.* DOI: [10.1016/j.ijpharm.2022.122192](https://doi.org/10.1016/j.ijpharm.2022.122192)
+- Danalou, S. et al. (2023). *AIChE J.* DOI: [10.1002/aic.18048](https://doi.org/10.1002/aic.18048)
+- Blocka, C. et al. (2024). *Int. J. Pharm.* DOI: [10.1016/j.ijpharm.2024.124664](https://doi.org/10.1016/j.ijpharm.2024.124664)
+- Kalugin, D. et al. (2026). *J. Pharm. Sci.* DOI: [10.1016/j.xphs.2026.104226](https://doi.org/10.1016/j.xphs.2026.104226)
