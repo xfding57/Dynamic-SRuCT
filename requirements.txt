@@ -1,0 +1,7 @@
+numpy
+tifffile
+imageio
+Pillow
+matplotlib
+scikit-image
+PyQt5
